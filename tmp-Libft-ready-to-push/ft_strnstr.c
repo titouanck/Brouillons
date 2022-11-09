@@ -6,7 +6,7 @@
 /*   By: tchevrie <tchevrie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/10 23:52:11 by tchevrie          #+#    #+#             */
-/*   Updated: 2022/10/05 04:32:47 by tchevrie         ###   ########.fr       */
+/*   Updated: 2022/11/09 15:37:43 by tchevrie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,7 @@ char	*ft_strnstr(const char *haystack, const char *needle, size_t len)
 			return ((char *) haystack + i);
 		i++;
 	}
-	if (i == 0)
-		if (haystack[i] == needle[i] && ft_strlen(needle) == 0)
-			return ((char *) haystack);
+	if (ft_strlen(needle) == 0)
+		return ((char *) haystack);
 	return (NULL);
 }

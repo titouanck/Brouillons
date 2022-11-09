@@ -13,13 +13,9 @@ BONUS =	ft_lstadd_back_bonus.c ft_lstadd_front_bonus.c ft_lstclear_bonus.c \
 
 SRCS = ${LIBC} ${ADDITIONAL}
 
-SRCSBONUS = ${SRCS} ${BONUS}
-
-SRCSALL = $(wildcard *.c)
+SRCSALL = ${LIBC} ${ADDITIONAL} ${BONUS}
 
 OBJS = ${SRCS:.c=.o}
-
-OBJSBONUS = ${SRCSBONUS:.c=.o} 
 
 OBJSALL = ${SRCSALL:.c=.o} 
 
@@ -35,15 +31,8 @@ CFLAGS = -Wall -Werror -Wextra -I ./
 ${LIB}:	${OBJS}
 		ar -rsc ${LIB} ${OBJS}
 
-bonus:	${OBJSBONUS}
-		ar -rsc ${LIB} ${OBJSBONUS}
-
-mine:	${OBJSALL}
+bonus:	${OBJSALL}
 		ar -rsc ${LIB} ${OBJSALL}
-
-m:		${mine}
-
-a:		${mine}
 
 all: 	${LIB}
 
@@ -55,4 +44,4 @@ fclean:	clean;
 
 re:	fclean all
 
-.PHONY: all clean fclean re 
+.PHONY: all clean fclean re bonus
