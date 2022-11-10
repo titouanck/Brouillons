@@ -6,7 +6,7 @@
 /*   By: tchevrie <tchevrie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/29 14:57:26 by tchevrie          #+#    #+#             */
-/*   Updated: 2022/11/10 13:27:03 by tchevrie         ###   ########.fr       */
+/*   Updated: 2022/11/10 14:02:15 by tchevrie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,4 +113,14 @@ char	*get_next_line(int fd)
 	line = tl_strjoin(begin);
 	free_elements(&begin, current);
 	return (line);
+}
+
+int	main(void)
+{
+	int	fd;
+
+	fd = open("fichier.txt", O_RDONLY);
+	if (fd < 0)
+		return (0);
+	printf(" [%s]\n", get_next_line(fd));
 }

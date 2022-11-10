@@ -6,7 +6,7 @@
 /*   By: tchevrie <tchevrie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/29 12:20:49 by tchevrie          #+#    #+#             */
-/*   Updated: 2022/09/30 16:05:36 by tchevrie         ###   ########.fr       */
+/*   Updated: 2022/11/10 14:01:12 by tchevrie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,16 @@
 # define GET_NEXT_LINE_H
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 42
+#  define BUFFER_SIZE 1
 # endif
 
 # include <stdlib.h>
 # include <unistd.h>
 
+#include <sys/types.h>
+       #include <sys/stat.h>
+       #include <fcntl.h>
+	#include <stdio.h>
 typedef struct s_list
 {
 	char			*content;
