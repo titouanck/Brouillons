@@ -6,7 +6,7 @@
 /*   By: tchevrie <tchevrie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/10 10:04:48 by tchevrie          #+#    #+#             */
-/*   Updated: 2022/11/10 15:50:52 by tchevrie         ###   ########.fr       */
+/*   Updated: 2022/11/11 16:30:08 by tchevrie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,23 +14,59 @@
 
 int	main(void)
 {
-	char	*r;
-	int		fd;
+	int	f41_no_nl, f42_with_nl, falternate_line_nl_no_nl, fbig_line_with_nl, fmultiple_line_with_nl;
+	char *r41_no_nl, *r42_with_nl, *ralternate_line_nl_no_nl, *rbig_line_with_nl, *rmultiple_line_with_nl;
 
-	// fd = 0;
-	fd = open("test.txt", O_RDONLY);
-	if (fd < 0)
-		return (0);
-	r = (void *) 1;
-	while (r)
+	f41_no_nl = open("41_no_nl", O_RDONLY);
+	f42_with_nl = open("42_with_nl", O_RDONLY);
+	falternate_line_nl_no_nl = open("alternate_line_nl_no_nl", O_RDONLY);
+	fbig_line_with_nl = open("big_line_with_nl", O_RDONLY);
+	fmultiple_line_with_nl = open("multiple_line_with_nl", O_RDONLY);
+
+	r41_no_nl = (char *) 1;
+	while (r41_no_nl || r42_with_nl || ralternate_line_nl_no_nl || rbig_line_with_nl || rmultiple_line_with_nl)
 	{
-		// r = get_next_line(0);
-		// printf("-> %s\n", r);
-		// if (r)
-		// 	free(r);
-		r = get_next_line(fd);
-		printf("-> %s\n", r);
-		if (r)
-			free(r);
+		r41_no_nl = get_next_line(f41_no_nl);
+		printf("r41_no_nl : [%s]\n", r41_no_nl);
+		if (r41_no_nl)
+			free(r41_no_nl);
+		r42_with_nl = get_next_line(f42_with_nl);
+		printf("r42_with_nl : [%s]\n", r42_with_nl);
+		if (r42_with_nl)
+			free(r42_with_nl);
+		ralternate_line_nl_no_nl = get_next_line(falternate_line_nl_no_nl);
+		printf("ralternate_line_nl_no_nl : [%s]\n", ralternate_line_nl_no_nl);
+		if (ralternate_line_nl_no_nl)
+			free(ralternate_line_nl_no_nl);
+		rbig_line_with_nl = get_next_line(fbig_line_with_nl);
+		printf("rbig_line_with_nl : [%s]\n", rbig_line_with_nl);
+		if (rbig_line_with_nl)
+			free(rbig_line_with_nl);
+		rmultiple_line_with_nl = get_next_line(fmultiple_line_with_nl);
+		printf("rmultiple_line_with_nl : [%s]\n", rmultiple_line_with_nl);
+		if (rmultiple_line_with_nl)
+			free(rmultiple_line_with_nl);
 	}
+
 }
+	// int	f41_with_nl, f43_no_nl, falternate_line_nl_with_nl, fempty, fmultiple_nlx5;
+	// int	f42_no_nl, f43_with_nl, fbig_line_no_nl, fmultiple_line_no_nl, fnl;
+
+	// char*	r41_with_nl, r43_no_nl, ralternate_line_nl_with_nl, rempty, rmultiple_nlx5;
+	// char*	r42_no_nl, r43_with_nl, rbig_line_no_nl, rmultiple_line_no_nl, rnl;
+
+	// f41_with_nl = open("41_with_nl", O_RDONLY);
+	// f43_no_nl = open("43_no_nl", O_RDONLY);
+	// falternate_line_nl_with_nl = open("alternate_line_nl_with_nl", O_RDONLY);
+	// fempty = open("empty", O_RDONLY);
+	// fmultiple_nlx5 = open("multiple_nlx5", O_RDONLY);
+
+	// f42_no_nl = open("42_no_nl", O_RDONLY);
+	// f43_with_nl = open("43_with_nl", O_RDONLY);
+	// fbig_line_no_nl = open("big_line_no_nl", O_RDONLY);
+	// fmultiple_line_no_nl = open("multiple_line_no_nl", O_RDONLY);
+	// fnl = open("nl", O_RDONLY);
+
+
+	// || r41_with_nl || r43_no_nl || ralternate_line_nl_with_nl || rempty || rmultiple_nlx5
+	// || r42_no_nl || r43_with_nl || rbig_line_no_nl || rmultiple_line_no_nl || rnl)

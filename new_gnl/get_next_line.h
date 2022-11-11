@@ -6,7 +6,7 @@
 /*   By: tchevrie <tchevrie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 10:30:31 by tchevrie          #+#    #+#             */
-/*   Updated: 2022/11/10 13:06:55 by tchevrie         ###   ########.fr       */
+/*   Updated: 2022/11/11 15:52:42 by tchevrie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 # define GET_NEXT_LINE_H
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 2
+#  define BUFFER_SIZE 3
 # endif
 
 # include <stdlib.h>
@@ -40,9 +40,10 @@ typedef struct s_fdList
 char			*get_next_line(int fd);
 
 /* get_next_line_utils.c */
-void			*ft_calloc(size_t nmemb, size_t size);
 t_bufferList	*ftlst_new_buffer(void);
 t_fdList		*ftlst_new_fd(int fd);
 int				end_of_line(char *content);
+size_t			count_memory(t_bufferList *current);
+t_fdList		*clean_fd_list(t_fdList *fd_list, t_fdList *current);
 
 #endif

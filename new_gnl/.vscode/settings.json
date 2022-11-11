@@ -1,5 +1,6 @@
 {
 	"files.associations": {
-		"ranges": "c"
+		"ranges": "c",
+		"get_next_line.h": "c"
 	}
 }

@@ -6,37 +6,46 @@
 /*   By: tchevrie <tchevrie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 10:30:09 by tchevrie          #+#    #+#             */
-/*   Updated: 2022/11/10 15:54:18 by tchevrie         ###   ########.fr       */
+/*   Updated: 2022/11/11 15:57:12 by tchevrie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-static t_fdList	*find_fdbegin(int fd)
+static t_fdList	*find_fdbegin(int fd, int clean)
 {
 	static t_fdList		*fd_list;
-	t_fdList			*current_fd;
+	t_fdList			*current;
 
 	if (!fd_list)
-		fd_list = ftlst_new_fd(0);
+		fd_list = ftlst_new_fd(fd);
 	if (!fd_list)
 		return (NULL);
-	current_fd = fd_list;
-	while (current_fd->next_fd && current_fd->fd != fd)
-		current_fd = current_fd->next_fd;
-	if (current_fd->fd != fd)
+	current = fd_list;
+	while (current->next_fd && current->fd != fd)
+		current = current->next_fd;
+	if (clean)
+		fd_list = clean_fd_list(fd_list, current);
+	else if (current->fd != fd)
 	{
-		current_fd->next_fd = ftlst_new_fd(fd);
-		current_fd = current_fd->next_fd;
+		current->next_fd = ftlst_new_fd(fd);
+		current = current->next_fd;
 	}
-	return (current_fd);
+	return (current);
 }
 
 static int	read_file(int fd, t_bufferList *current, t_bufferList *begin)
 {
+	if (begin && (begin->content[0]) && !end_of_line(begin->content))
+	{
+		begin->next = ftlst_new_buffer();
+		current = begin->next;
+	}
 	if (!begin)
 		return (0);
-	while (read(fd, current->content, BUFFER_SIZE))
+	if (end_of_line(begin->content))
+		return (1);
+	while (read(fd, current->content, BUFFER_SIZE) > 0)
 	{
 		if (end_of_line(current->content))
 			break ;
@@ -48,24 +57,16 @@ static int	read_file(int fd, t_bufferList *current, t_bufferList *begin)
 	return (1);
 }
 
-static char	*join_buffers(t_bufferList *begin, t_bufferList *current)
+static char	*join_buffers(t_bufferList *current)
 {
-	size_t			buffers;
 	char			*line;
 	size_t			i;
 	size_t			j;
 
-	buffers = 1;
-	while (current->next)
-	{
-		current = current->next;
-		buffers++;
-	}
-	line = ft_calloc(buffers, BUFFER_SIZE + 1);
+	line = malloc(count_memory(current));
 	if (!line)
 		return (NULL);
 	i = 0;
-	current = begin;
 	while (current && current->content)
 	{
 		j = 0;
@@ -74,37 +75,8 @@ static char	*join_buffers(t_bufferList *begin, t_bufferList *current)
 		current = current->next;
 	}
 	line[i] = '\0';
-	printf("buffers * (BUFFER_SIZE + 1) : %lu, i = %lu | [%s]\n", buffers * (BUFFER_SIZE + 1), i, line);
 	return (line);
 }
-
-// static void	clean_buffers(t_bufferList *begin, t_bufferList *current)
-// {
-// 	size_t			i;
-// 	size_t			j;
-// 	t_bufferList	*next;
-
-// 	while (current && current->next && current->next->content[0])
-// 		current = current->next;
-// 	i = 0;
-// 	while ((current->content)[i])
-// 		if ((current->content)[i++] == '\n')
-// 			break ;
-// 	j = 0;
-// 	while ((current->content)[i])
-// 		(begin->content)[j++] = (current->content)[i++];
-// 	(begin->content)[j] = '\0';
-// 	next = begin->next;
-// 	begin->next = 0;
-// 	begin = next;
-// 	while (begin)
-// 	{
-// 		next = begin->next;
-// 		free(begin->content);
-// 		free(begin);
-// 		begin = next;
-// 	}
-// }
 
 static void	clean_buffers(t_bufferList *current, t_fdList *current_fd)
 {
@@ -130,32 +102,34 @@ static void	clean_buffers(t_bufferList *current, t_fdList *current_fd)
 	j = 0;
 	while ((current->content)[i])
 		(current->content)[j++] = (current->content)[i++];
-	(current->content)[j] = '\0';
+	while (j <= BUFFER_SIZE)
+		(current->content)[j++] = '\0';
 }
-
 
 char	*get_next_line(int fd)
 {
 	t_fdList			*current_fd;
 	t_bufferList		*begin;
-	t_bufferList		*current;
 	char				*line;
 
 	if (fd < 0 || BUFFER_SIZE < 1)
 		return (NULL);
-	current_fd = find_fdbegin(fd);
+	current_fd = find_fdbegin(fd, 0);
 	if (!current_fd)
 		return (NULL);
 	begin = current_fd->begin;
-	current = begin;
-	if (begin && (begin->content[0]))
+	if (!(read_file(fd, begin, begin)))
 	{
-		begin->next = ftlst_new_buffer();
-		current = begin->next;
-	}
-	if (!(read_file(fd, current, begin)))
+		if (current_fd && current_fd->begin && current_fd->begin->content)
+		{
+			free(current_fd->begin->content);
+			free(current_fd->begin);
+			find_fdbegin(fd, 1);
+			free(current_fd);
+		}
 		return (NULL);
-	line = join_buffers(begin, current);
+	}
+	line = join_buffers(begin);
 	clean_buffers(begin, current_fd);
 	return (line);
 }

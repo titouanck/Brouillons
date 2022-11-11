@@ -6,43 +6,31 @@
 /*   By: tchevrie <tchevrie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/09 10:30:06 by tchevrie          #+#    #+#             */
-/*   Updated: 2022/11/10 09:39:30 by tchevrie         ###   ########.fr       */
+/*   Updated: 2022/11/11 15:52:10 by tchevrie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-void	*ft_calloc(size_t nmemb, size_t size)
-{
-	void	*new;
-	size_t	i;
-
-	if (nmemb && size && nmemb > (size_t) -1 / size)
-		return (NULL);
-	new = (void *) malloc(nmemb * size);
-	if (!new)
-		return (NULL);
-	i = 0;
-	while (i < nmemb * size)
-	{
-		*(unsigned char *)(new + i) = '\0';
-		i++;
-	}
-	return (new);
-}
-
 t_bufferList	*ftlst_new_buffer(void)
 {
 	t_bufferList	*new;
+	int				i;
 
-	new = ft_calloc(sizeof(t_bufferList), 1);
+	new = malloc(sizeof(t_bufferList));
 	if (!new)
 		return (NULL);
-	new->content = calloc(BUFFER_SIZE + 1, 1);
+	new->content = malloc(BUFFER_SIZE + 1);
 	if (!(new->content))
 	{
 		free(new);
 		return (NULL);
+	}
+	i = 0;
+	while (i < BUFFER_SIZE + 1)
+	{
+		(new->content)[i] = '\0';
+		i++;
 	}
 	new->next = 0;
 	return (new);
@@ -52,7 +40,7 @@ t_fdList	*ftlst_new_fd(int fd)
 {
 	t_fdList	*new;
 
-	new = ft_calloc(sizeof(t_fdList), 1);
+	new = malloc(sizeof(t_fdList));
 	if (!new)
 		return (NULL);
 	new->fd = fd;
@@ -78,4 +66,47 @@ int	end_of_line(char *content)
 		i++;
 	}
 	return (0);
+}
+
+size_t	count_memory(t_bufferList *current)
+{
+	size_t	memory;
+	size_t	i;
+
+	memory = 1;
+	while (current)
+	{
+		i = 0;
+		while ((current->content)[i])
+		{
+			memory++;
+			i++;
+			if ((current->content)[i - 1] == '\n')
+				break ;
+		}
+		if (i > 0 && (current->content)[i - 1] == '\n')
+		{
+			i++;
+			break ;
+		}
+		current = current->next;
+	}
+	return (memory);
+}
+
+t_fdList	*clean_fd_list(t_fdList *fd_list, t_fdList *current)
+{
+	t_fdList	*tmp;
+
+	if (fd_list == current)
+			fd_list = fd_list->next_fd;
+	else
+	{
+		tmp = fd_list;
+		while (tmp->next_fd && tmp->next_fd != current)
+			tmp = tmp->next_fd;
+		if (tmp->next_fd)
+			tmp->next_fd = tmp->next_fd->next_fd;
+	}
+	return (fd_list);
 }
