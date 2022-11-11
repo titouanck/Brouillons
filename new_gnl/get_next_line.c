@@ -41,8 +41,6 @@ static int	read_file(int fd, t_bufferList *current, t_bufferList *begin)
 		begin->next = ftlst_new_buffer();
 		current = begin->next;
 	}
-	if (!begin)
-		return (0);
 	if (end_of_line(begin->content))
 		return (1);
 	while (read(fd, current->content, BUFFER_SIZE) > 0)
@@ -108,28 +106,42 @@ static void	clean_buffers(t_bufferList *current, t_fdList *current_fd)
 
 char	*get_next_line(int fd)
 {
-	t_fdList			*current_fd;
+	t_fdList			*c_fd;
 	t_bufferList		*begin;
 	char				*line;
 
 	if (fd < 0 || BUFFER_SIZE < 1)
 		return (NULL);
-	current_fd = find_fdbegin(fd, 0);
-	if (!current_fd)
+	c_fd = find_fdbegin(fd, 0);
+	if (!c_fd)
 		return (NULL);
-	begin = current_fd->begin;
-	if (!(read_file(fd, begin, begin)))
+	begin = c_fd->begin;
+	if (read_file(fd, begin, begin))
+		line = join_buffers(begin);
+	else
+		line = NULL;
+	clean_buffers(begin, c_fd);
+	if (c_fd->begin && c_fd->begin->content && !((c_fd->begin->content)[0]))
 	{
-		if (current_fd && current_fd->begin && current_fd->begin->content)
-		{
-			free(current_fd->begin->content);
-			free(current_fd->begin);
-			find_fdbegin(fd, 1);
-			free(current_fd);
-		}
-		return (NULL);
+		free(c_fd->begin->content);
+		free(c_fd->begin);
+		find_fdbegin(fd, 1);
+		free(c_fd);
 	}
-	line = join_buffers(begin);
-	clean_buffers(begin, current_fd);
 	return (line);
 }
+
+	// if (!(read_file(fd, begin, begin)))
+	// {
+	// 	if (current_fd && current_fd->begin && current_fd->begin->content)
+	// 	{
+	// 		free(current_fd->begin->content);
+	// 		free(current_fd->begin);
+	// 		find_fdbegin(fd, 1);
+	// 		free(current_fd);
+	// 	}
+	// 	return (NULL);
+	// }
+	// line = join_buffers(begin);
+	// clean_buffers(begin, current_fd);
+	// return (line);

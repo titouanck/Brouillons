@@ -21,6 +21,7 @@ int	main(void)
 	char *r41_no_nl, *r42_with_nl, *ralternate_line_nl_no_nl, *rbig_line_with_nl, *rmultiple_line_with_nl;
 	char	*r41_with_nl, *r43_no_nl, *ralternate_line_nl_with_nl, *rempty, *rmultiple_nlx5;
 	char	*r42_no_nl, *r43_with_nl, *rbig_line_no_nl, *rmultiple_line_no_nl, *rnl;
+	char	*rstdin;
 
 	f41_no_nl = open("41_no_nl", O_RDONLY);
 	f42_with_nl = open("42_with_nl", O_RDONLY);
@@ -108,7 +109,16 @@ int	main(void)
 		if (rnl)
 			free(rnl);
 
+		get_next_line(-1);
+		get_next_line(1799);
+		get_next_line(-1);
+
 		printf("\n\n\n");
 	}
+	printf("Ecris quelque chose...\n");
+	rstdin = get_next_line(0);
+	printf("stdin : [%s]\n", rstdin);
+	if (rstdin)
+		free(rstdin);
 }
 
